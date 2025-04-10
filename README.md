@@ -1,5 +1,4 @@
 # Saigak
-## About
 Saigak is an open source web framework based on ASP.NET written in C#. Saigak makes it possible to create websites with C#, Python, JavaScript, Lua or PHP (maybe more to come) in an DotNet environment.<br/>
 The main goal is to combine the performance of DotNet and the speed of development with scripting languages (no recompilation etc).
 
