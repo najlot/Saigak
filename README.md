@@ -32,6 +32,5 @@ This list may change as the development continues. The order is not the priority
 - Debugging support
 - Provide precompiled binaries and Docker container
 - Share data between sections (Something like "<?cs (var) num = 42;?> some HTML here <?cs Console.WriteLine(num);?>")
-- Routing (routing config file / routing stript)
+- Routing (routing config file / routing script)
 - Send and handle events
-- 
