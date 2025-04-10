@@ -398,3 +398,8 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+# Data folder
+/src/Saigak/data
+/src/Saigak.Data/data
+/src/Saigak.Blobs/data

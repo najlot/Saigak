@@ -1,0 +1,39 @@
+<?cs await RunFileAsync("/header.html"); ?>
+  <link rel="stylesheet" href="index.css" />
+  
+  <body>
+	<div class="login-container d-flex h-100 p-3 mx-auto flex-column">
+		<header class="mb-auto"></header>
+		<main>
+		<form id="loginForm">
+			<label for="username">Username</label>
+			<input name="username" id="username" type="text" class="form-control" />
+			
+			<label for="password">Password</label>
+			<input name="password" id="password" type="password" class="form-control" />
+		</form>
+		<div class="float-sm-right">
+			<a type="button" href="register.sai" style="margin: 10px" class="btn btn-primary">Register</a>
+			<button type="button" style="margin: 10px" class="btn btn-primary" onclick="tryLogin()">Login</button>
+		</div>
+		</main>
+		<footer class="mt-auto"></footer>
+    </div>
+	
+<?cs await RunFileAsync("/common_js_libs.html"); ?>
+	
+	<script type="text/javascript" language="javascript">
+		function tryLogin(){
+			var data = $("#loginForm").serialize();
+			$.ajax({
+				type:'POST',
+				url: "login.cs",
+				data: data,
+				success:function(){
+				   window.location.href = "todoitems.sai";
+			   }
+		   });
+		}
+	</script>
+  </body>
+</html>

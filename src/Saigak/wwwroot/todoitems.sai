@@ -1,0 +1,159 @@
+<?cs
+if (!Context.Request.Cookies.TryGetValue("username", out var username))
+{
+	throw new Exception("no username");
+}
+
+if (!Context.Request.Cookies.TryGetValue("password", out var password))
+{
+	throw new Exception("no username");
+}
+
+class User
+{
+	public string Username { get; set; }
+	public string Password { get; set; }
+}
+
+var path = Path.Combine("data", "users.json");
+var content = await File.ReadAllTextAsync(path);
+var users = JsonConvert.DeserializeObject<List<User>>(content);
+
+if (!users.Any(u => u.Username == username && u.Password == password))
+{
+	throw new Exception("bad login");
+}
+
+await RunFileAsync("/header.html");
+?>
+
+<body>
+	<div style="min-height: 10px" ></div>
+	<h1 class="text-center">Todos</h1>
+	<table class="table">
+		<thead class="thead-light">
+			<tr>
+				<th scope="col">Title</th>
+				<th scope="col">Created date</th>
+				<th scope="col">Priority</th>
+				<th scope="col">Action</th>
+			</tr>
+		</thead>
+	<tbody>
+		<?cs
+		if (!Context.Request.Cookies.TryGetValue("username", out var username))
+		{
+			username = "unknown";
+		}
+		
+		Directory.CreateDirectory(Path.Combine("data", username));
+		
+		public class TodoItem
+		{
+			public Guid Id { get; set; }
+			public string Title { get; set; }
+			public DateTime CreatedAt { get; set; }
+			public string Priority { get; set; }
+		}
+		
+		var path = Path.Combine("data", username, "todos.json");
+		
+		if (!File.Exists(path))
+		{
+			var entries = new List<TodoItem>()
+			{
+				new TodoItem()
+				{
+					Id = Guid.NewGuid(),
+					Title = "Create todos",
+					CreatedAt = DateTime.Now,
+					Priority = "None"
+				},
+				new TodoItem()
+				{
+					Id = Guid.NewGuid(),
+					Title = "Delete todos",
+					CreatedAt = DateTime.Now,
+					Priority = "None"
+				}
+			};
+			
+			var content = JsonConvert.SerializeObject(entries);
+			File.WriteAllText(path, content);
+		}
+		
+		var content = File.ReadAllText(path);
+		var items = JsonConvert.DeserializeObject<List<TodoItem>>(content);
+		
+		foreach (var item in items)
+		{
+			await WriteLineAsync("<tr>");
+			await WriteLineAsync("<td>");
+			await WriteLineAsync(item.Title);
+			await WriteLineAsync("</td>");
+			
+			await WriteLineAsync("<td>");
+			await WriteLineAsync(item.CreatedAt.ToString());
+			await WriteLineAsync("</td>");
+			
+			await WriteLineAsync("<td>");
+			await WriteLineAsync(item.Priority);
+			await WriteLineAsync("</td>");
+			
+			await WriteLineAsync("<td>");
+			await WriteLineAsync("<button class=\"btn btn-danger\" type=\"button\" onclick=\"deleteTodoItem('"+item.Id+"')\">Delete</button>");
+			await WriteLineAsync("</td>");
+			
+			await WriteLineAsync("</tr>");
+		}
+		?>
+		<form id="newItemForm">
+		<tr>
+		<td>
+			<input name="title" id="newItemFormTitle" type="text" placeholder="Enter Title" class="form-control"/>
+		</td>
+			<td>
+			</td>
+			<td>
+				<input name="priority" id="newItemFormPriority" placeholder="Enter Priority" type="text" class="form-control"/>
+			</td>
+			<td>
+				<button class="btn btn-primary" type="button" onclick="addTodoItem()">Create</button>
+			</td>
+		</tr>
+	</form>
+	</tbody>
+	</table>
+
+<?cs await RunFileAsync("/common_js_libs.html"); ?>
+	
+	<script type="text/javascript" language="javascript">
+		function addTodoItem(){
+			var data = $("#newItemForm").serialize();
+			$("#newItemFormTitle").val("");
+			$("#newItemFormPriority").val("");
+			
+			$.ajax({
+				type:'POST',
+				url: "addTodoItem.cs",
+				data: data,
+				success:function(){
+				   location.reload();
+			   }
+		   });
+		}
+		
+		function deleteTodoItem(key)
+		{
+			$.ajax({
+				type: "DELETE",
+				url: "deleteTodoItem.cs",
+				data: "id=" + key,
+				success: function(msg){
+					location.reload();
+				}
+			});
+		}
+	</script>
+  </body>
+</html>
